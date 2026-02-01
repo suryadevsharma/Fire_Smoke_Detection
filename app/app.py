@@ -11,8 +11,14 @@ import pandas as pd
 import threading
 import time
 import torch
-from ultralytics import YOLO
+# ... other imports
 
+# ----------- MODEL PATH ----------------
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODEL_PATH = os.path.join(BASE_DIR, "models", "best.pt")
+
+# ----------- MODEL LOAD ----------------
+model = YOLO(MODEL_PATH)
 
 
 # ----------- WINSOUND (Windows Alarm Support) ------------
