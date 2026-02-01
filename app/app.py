@@ -7,6 +7,10 @@ from datetime import datetime
 import pandas as pd
 import threading
 import time
+import torch
+from ultralytics import YOLO
+
+
 
 # ----------- WINSOUND (Windows Alarm Support) ------------
 try:

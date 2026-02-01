@@ -1,9 +1,5 @@
-Fire_Smoke_Detection/
-│
-├── app/
-│   └── app.py        ✅
-├── models/
-│   └── best.pt       ⚠️ (see note below)
-├── requirements.txt  ❗ REQUIRED
-├── .gitignore
-└── README.md         (optional but good)
+streamlit
+ultralytics
+opencv-python-headless==4.8.1.78
+numpy==1.26.4
+pillow
