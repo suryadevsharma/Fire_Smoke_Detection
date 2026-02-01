@@ -1,0 +1,9 @@
+Fire_Smoke_Detection/
+│
+├── app/
+│   └── app.py        ✅
+├── models/
+│   └── best.pt       ⚠️ (see note below)
+├── requirements.txt  ❗ REQUIRED
+├── .gitignore
+└── README.md         (optional but good)
