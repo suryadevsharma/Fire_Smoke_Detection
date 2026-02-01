@@ -16,7 +16,13 @@ import torch
 # ----------- MODEL PATH ----------------
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "best.pt")
+from ultralytics.nn.tasks import DetectionModel
+import dill
 
+torch.serialization.safe_globals([
+    DetectionModel,
+    dill._dill._load_type
+])
 # ----------- MODEL LOAD ----------------
 model = YOLO(MODEL_PATH)
 
