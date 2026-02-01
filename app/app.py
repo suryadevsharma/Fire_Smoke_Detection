@@ -11,22 +11,11 @@ import pandas as pd
 import threading
 import time
 import torch
-# ... other imports
 
 # ----------- MODEL PATH ----------------
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "best.pt")
-try:
-    from ultralytics.nn.tasks import DetectionModel
-    import dill
 
-    if hasattr(torch.serialization, "safe_globals"):
-        torch.serialization.safe_globals([
-            DetectionModel,
-            dill._dill._load_type
-        ])
-except Exception:
-    pass
 # ----------- MODEL LOAD ----------------
 model = YOLO(MODEL_PATH)
 
