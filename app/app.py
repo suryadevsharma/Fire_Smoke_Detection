@@ -1,3 +1,6 @@
+import os
+os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "0"
+
 import streamlit as st
 from ultralytics import YOLO
 import cv2
