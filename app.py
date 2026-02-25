@@ -3,7 +3,6 @@ os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "0"
 
 import streamlit as st
 from ultralytics import YOLO
-import cv2
 import tempfile
 import numpy as np
 from datetime import datetime
@@ -17,7 +16,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "best.pt")
 
 # ----------- MODEL LOAD ----------------
-model = YOLO(MODEL_PATH)
+@st.cache_resource
+def load_model():
+    from ultralytics import YOLO
+    return YOLO(MODEL_PATH)
+
+model = load_model()
 
 
 # ----------- WINSOUND (Windows Alarm Support) ------------
