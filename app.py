@@ -25,7 +25,8 @@ MODEL_PATH = os.path.join(BASE_DIR, "models", "best.pt")
 @st.cache_resource
 def load_model():
     from ultralytics import YOLO
-    return YOLO(MODEL_PATH)
+    model = YOLO(MODEL_PATH, task="detect")
+    return model
 
 model = load_model()
 
