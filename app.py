@@ -13,7 +13,7 @@ import time
 import torch
 
 # ----------- MODEL PATH ----------------
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "best.pt")
 
 # ----------- MODEL LOAD ----------------
