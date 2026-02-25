@@ -2,14 +2,20 @@ import os
 os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "0"
 
 import streamlit as st
-from ultralytics import YOLO
 import tempfile
 import numpy as np
+import cv2 
 from datetime import datetime
 import pandas as pd
 import threading
 import time
 import torch
+
+st.set_page_config(
+    page_title="Fire & Smoke Detection Dashboard",
+    layout="wide",
+    page_icon="🔥",
+)
 
 # ----------- MODEL PATH ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -70,11 +76,6 @@ def stop_alarm():
 
 
 # ------------------ PAGE CONFIG & CSS ------------------
-st.set_page_config(
-    page_title="Fire & Smoke Detection Dashboard",
-    layout="wide",
-    page_icon="🔥",
-)
 
 st.markdown("""
 <style>
@@ -170,13 +171,8 @@ with st.sidebar:
     st.title("⚙️ Controls")
     st.caption("Advanced Fire & Smoke Detection Dashboard")
 
-    try:
-        # Adjust path as per your folder structure
-        model = YOLO("../models/best.pt")
-        st.success("✅ Model loaded successfully")
-    except Exception as e:
-        st.error(f"❌ Error loading model:\n{e}")
-        st.stop()
+    st.success("✅ Model loaded successfully")
+
 
     conf_threshold = st.slider(
         "Detection Confidence Threshold",
