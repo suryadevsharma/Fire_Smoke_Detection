@@ -73,7 +73,13 @@ def stop_alarm():
     global alarm_running
     alarm_running = False
 
-
+def play_browser_alarm():
+    alarm_html = """
+    <audio autoplay>
+        <source src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" type="audio/mpeg">
+    </audio>
+    """
+    st.markdown(alarm_html, unsafe_allow_html=True)
 # ------------------ PAGE CONFIG & CSS ------------------
 
 st.markdown("""
@@ -291,10 +297,13 @@ def process_detections(results):
     )
 
     if found_fire_or_smoke:
-        start_alarm()
+        if HAS_WINSOUND:
+            start_alarm()      # Local Windows
+        else:
+            play_browser_alarm()  # Streamlit Cloud
     else:
         stop_alarm()
-
+        
     was_active = st.session_state["event_active"]
 
     if found_fire_or_smoke and not was_active:
