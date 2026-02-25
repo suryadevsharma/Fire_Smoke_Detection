@@ -19,17 +19,15 @@ st.set_page_config(
 
 # ----------- MODEL PATH ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "models", "best.pt")
+MODEL_PATH = os.path.join(BASE_DIR, "models", "best.onnx")
 
 # ----------- MODEL LOAD ----------------
 @st.cache_resource
 def load_model():
     from ultralytics import YOLO
-    model = YOLO(MODEL_PATH, task="detect")
-    return model
+    return YOLO(MODEL_PATH)
 
 model = load_model()
-
 
 # ----------- WINSOUND (Windows Alarm Support) ------------
 try:
@@ -240,25 +238,19 @@ def add_snapshot(frame_rgb, label, conf):
 
 # ------------------ COMMON HELPERS ------------------
 def process_detections(results):
-    """
-    Extract fire/smoke info, update logs & stats, and control alarm.
 
-    Event-based:
-      - event_active False & fire found  -> new_event True
-      - event_active True & fire found   -> new_event False
-      - no fire                          -> event_active False
+    # 🔥 Fix for ONNX: provide fallback class names
+    names = model.names if model.names is not None else {0: "fire", 1: "smoke"}
 
-    Returns:
-        alert (bool): fire/smoke present in this frame
-        label_str (str): summary label
-        severity_level (str): 🔥 / 🔥🔥 / 🔥🔥🔥 / Low / ""
-        max_conf (float): max confidence
-        new_event (bool): True only for FIRST frame of each event
-    """
-    names = model.names  # class names
+    # Safety check
+    if results is None or len(results) == 0:
+        stop_alarm()
+        st.session_state["event_active"] = False
+        return False, "", "", 0.0, False
+
     boxes = results[0].boxes
+
     if boxes is None or len(boxes) == 0:
-        # No detections -> stop alarm, end any active event
         stop_alarm()
         st.session_state["event_active"] = False
         return False, "", "", 0.0, False
@@ -266,12 +258,14 @@ def process_detections(results):
     cls_list = boxes.cls.cpu().numpy()
     conf_list = boxes.conf.cpu().numpy()
 
-    found_fire_or_smoke = False    # at least 1 fire/smoke
+    found_fire_or_smoke = False
     max_conf = 0.0
     label_str = ""
 
     for cls_id, conf in zip(cls_list, conf_list):
-        label = names[int(cls_id)].lower()
+
+        # 🔥 Safe class name access
+        label = names.get(int(cls_id), "unknown").lower()
         conf_val = float(conf)
 
         if conf_val > max_conf:
@@ -281,45 +275,37 @@ def process_detections(results):
             found_fire_or_smoke = True
             label_str = label
 
-            # Update counts
             if "fire" in label:
                 st.session_state["fire_count"] += 1
             if "smoke" in label:
                 st.session_state["smoke_count"] += 1
 
-            # Log entry
             st.session_state["logs"].append({
                 "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "type": label,
                 "confidence": round(conf_val, 3)
             })
 
-    # Update global max confidence
     st.session_state["last_conf"] = max(
         st.session_state["last_conf"], max_conf
     )
 
-    # Alarm control
     if found_fire_or_smoke:
         start_alarm()
     else:
         stop_alarm()
 
-    # ----- Event-based logic -----
     was_active = st.session_state["event_active"]
+
     if found_fire_or_smoke and not was_active:
-        # New event starts here
         new_event = True
         st.session_state["event_active"] = True
     elif not found_fire_or_smoke:
-        # Event ended
         new_event = False
         st.session_state["event_active"] = False
     else:
-        # Continuing event
         new_event = False
 
-    # Severity based on max_conf
     if max_conf >= 0.80:
         severity = "🔥🔥🔥 Critical"
     elif max_conf >= 0.60:
@@ -332,8 +318,6 @@ def process_detections(results):
         severity = ""
 
     return found_fire_or_smoke, label_str, severity, max_conf, new_event
-
-
 def draw_frame_with_alert(frame, results):
     annotated = results[0].plot()
     annotated = cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB)
