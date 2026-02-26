@@ -10,6 +10,7 @@ import pandas as pd
 import threading
 import time
 import torch
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="Fire & Smoke Detection Dashboard",
@@ -241,7 +242,15 @@ def add_snapshot(frame_rgb, label, conf):
         "image": frame_rgb,
     })
 
-
+def play_browser_alarm():
+    components.html(
+        """
+        <audio autoplay loop>
+            <source src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" type="audio/mpeg">
+        </audio>
+        """,
+        height=0,
+    )
 # ------------------ COMMON HELPERS ------------------
 def process_detections(results):
 
