@@ -41,7 +41,18 @@ except:
 alarm_running = False
 alarm_thread = None
 
-
+def play_browser_alarm():
+    components.html(
+        """
+        <script>
+        var audio = new Audio("https://www.soundjay.com/buttons/sounds/beep-07.mp3");
+        audio.loop = true;
+        audio.play();
+        </script>
+        """,
+        height=0,
+    )
+    
 def alarm_loop():
     """Continuously beeps while alarm_running == True."""
     global alarm_running
@@ -306,10 +317,9 @@ def process_detections(results):
     )
 
     if found_fire_or_smoke:
+        play_browser_alarm()
         if HAS_WINSOUND:
-            start_alarm()      # Local Windows
-        else:
-            play_browser_alarm()  # Streamlit Cloud
+            start_alarm()
     else:
         stop_alarm()
         
