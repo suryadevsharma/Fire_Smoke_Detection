@@ -12,6 +12,23 @@ import time
 import torch
 import streamlit.components.v1 as components
 
+def play_browser_alarm():
+    components.html(
+        """
+        <audio id="alarm" loop autoplay>
+            <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mp3">
+        </audio>
+
+        <script>
+        const audio = document.getElementById("alarm");
+        if (audio) {
+            audio.play().catch(()=>{});
+        }
+        </script>
+        """,
+        height=0,
+    )
+
 st.set_page_config(
     page_title="Fire & Smoke Detection Dashboard",
     layout="wide",
@@ -41,18 +58,6 @@ except:
 alarm_running = False
 alarm_thread = None
 
-def play_browser_alarm():
-    components.html(
-        """
-        <script>
-        var audio = new Audio("https://www.soundjay.com/buttons/sounds/beep-07.mp3");
-        audio.loop = true;
-        audio.play();
-        </script>
-        """,
-        height=0,
-    )
-    
 def alarm_loop():
     """Continuously beeps while alarm_running == True."""
     global alarm_running
