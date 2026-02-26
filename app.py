@@ -140,7 +140,22 @@ if "enable_alarm" not in st.session_state:
     st.session_state["enable_alarm"] = True
 
 st.title("🔥 Fire & Smoke Detection Dashboard")
-
+# 🔊 Unlock browser audio automatically on first user interaction
+components.html(
+    """
+    <script>
+    document.addEventListener('click', function unlockAudio() {
+        var audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3");
+        audio.play().then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+        }).catch(()=>{});
+        document.removeEventListener('click', unlockAudio);
+    });
+    </script>
+    """,
+    height=0,
+)
 
 # ------------------ HELPER: REGION OF INTEREST ------------------
 def apply_roi(frame, roi_option: str):
