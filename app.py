@@ -1,7 +1,6 @@
 import os
 os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "0"
 
-import streamlit as st
 import tempfile
 import numpy as np
 import cv2 
@@ -11,23 +10,15 @@ import threading
 import time
 import torch
 import streamlit.components.v1 as components
+import streamlit as st
 
 def play_browser_alarm():
-    components.html(
-        """
-        <audio id="alarm" loop autoplay>
-            <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mp3">
-        </audio>
-
-        <script>
-        const audio = document.getElementById("alarm");
-        if (audio) {
-            audio.play().catch(()=>{});
-        }
-        </script>
-        """,
-        height=0,
+    st.audio(
+        "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3",
+        format="audio/mp3",
+        start_time=0
     )
+
 
 st.set_page_config(
     page_title="Fire & Smoke Detection Dashboard",
@@ -90,13 +81,7 @@ def stop_alarm():
     global alarm_running
     alarm_running = False
 
-def play_browser_alarm():
-    alarm_html = """
-    <audio autoplay>
-        <source src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" type="audio/mpeg">
-    </audio>
-    """
-    st.markdown(alarm_html, unsafe_allow_html=True)
+
 # ------------------ PAGE CONFIG & CSS ------------------
 
 st.markdown("""
@@ -258,15 +243,6 @@ def add_snapshot(frame_rgb, label, conf):
         "image": frame_rgb,
     })
 
-def play_browser_alarm():
-    components.html(
-        """
-        <audio autoplay loop>
-            <source src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" type="audio/mpeg">
-        </audio>
-        """,
-        height=0,
-    )
 # ------------------ COMMON HELPERS ------------------
 def process_detections(results):
 
