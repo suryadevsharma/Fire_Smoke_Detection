@@ -15,10 +15,8 @@ import streamlit as st
 def play_browser_alarm():
     st.audio(
         "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3",
-        format="audio/mp3",
-        start_time=0
+        format="audio/mp3"
     )
-
 
 st.set_page_config(
     page_title="Fire & Smoke Detection Dashboard",
